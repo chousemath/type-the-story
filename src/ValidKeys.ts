@@ -1,4 +1,4 @@
-const validChars = ' ,-.abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+const validChars = ' ,-.\'!":;#$%^&*()-_+=[]{}|/<>`~1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
 const validKeys: {[key: string]: boolean} = {
   Backspace: true
 }

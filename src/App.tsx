@@ -169,11 +169,11 @@ function App () {
     })
   }, [typed])
   return <>
-    <div style={{ padding: 16, fontSize: 40, display: 'flex', width: '100vw', height: '100vh', flexDirection: 'column' }}>
-      <div style={{ display: 'flex', flex: 1 }}>
+    <div style={{ padding: 16, fontSize: 50, lineHeight: 1.4, display: 'flex', width: '100vw', height: '100vh', flexDirection: 'column' }}>
+      <div style={{ display: 'flex', flex: 1, width: 'calc(100vw - 32px)' }}>
         <TypeableOptionGroup typeableOption={story}/>
       </div>
-      <div style={{ display: 'flex', flex: 1 }}>
+      <div style={{ display: 'flex', flex: 1, width: 'calc(100vw - 32px)' }}>
         <p style={{ marginTop: 40 }}>{typed}<span className='blink' style={{ color: 'purple' }}>|</span></p>
       </div>
     </div>
