@@ -168,16 +168,20 @@ function App () {
       }
     })
   }, [typed])
-  return <>
-    <div style={{ padding: 16, fontSize: 50, lineHeight: 1.4, display: 'flex', width: '100vw', height: '100vh', flexDirection: 'column' }}>
-      <div style={{ display: 'flex', flex: 1, width: 'calc(100vw - 32px)' }}>
-        <TypeableOptionGroup typeableOption={story}/>
-      </div>
-      <div style={{ display: 'flex', flex: 1, width: 'calc(100vw - 32px)' }}>
-        <p style={{ marginTop: 40 }}>{typed}<span className='blink' style={{ color: 'purple' }}>|</span></p>
+  return (
+    <div style={{ width: '100vw', height: '100vh', overflow: 'hidden' }}>
+      <div style={{ padding: 16, fontSize: 50, display: 'flex', width: '100vw', height: '100vh', flexDirection: 'column', overflowY: 'hidden' }}>
+        <div style={{ fontSize: 24, display: 'flex', height: 50, width: 'calc(100vw - 32px)', justifyContent: 'flex-start', alignItems: 'center' }}>
+          <p>Three Little Pigs 🐖🐖🐖</p>
+        </div>
+        <div style={{ display: 'flex', flex: 1, width: 'calc(100vw - 32px)' }}>
+          <TypeableOptionGroup typeableOption={story}/>
+        </div>
+        <div style={{ display: 'flex', flex: 1, width: 'calc(100vw - 32px)' }}>
+          <p>{typed}<span className='blink' style={{ color: 'purple' }}>|</span></p>
+        </div>
       </div>
     </div>
-    <div style={{ position: 'fixed', left: 0, top: 'calc(100vh / 2 - 1px)', width: '100vw', height: 2, backgroundColor: 'black' }}/>
-  </>
+  )
 }
 export default App
