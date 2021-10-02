@@ -2,10 +2,12 @@ import React, { useEffect, useRef, useState } from 'react'
 import './App.css'
 import PropTypes from 'prop-types'
 import { validKeys } from './ValidKeys'
-import { data } from './Data'
+import { stories } from './Data'
 enum TextColor { Highlighted='white', None='black' }
 enum TypedPart { None, Left, Middle }
 interface TypeableOption {
+  title: string;
+  data: Array<string>;
   full: string;
   left: string;
   right: string;
@@ -19,6 +21,8 @@ const defaults: {
   typeableOption: TypeableOption
 } = {
   typeableOption: {
+    title: 'The Three Little Pigs',
+    data: [],
     full: 'Hi there',
     left: '',
     right: 'Hi there',
@@ -64,12 +68,12 @@ TypeableOptionGroup.propTypes = {
 }
 function App () {
   const typedValue = useRef<string>()
-  const defaultStory: TypeableOption = {
+  const [story, setStory] = useState<TypeableOption>({
     ...defaults.typeableOption,
-    full: data[0],
-    right: data[0]
-  }
-  const [story, setStory] = useState<TypeableOption>(defaultStory)
+    data: stories[0].story,
+    full: stories[0].story[0],
+    right: stories[0].story[0]
+  })
   const [typed, setTyped] = useState<string>('')
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -97,16 +101,16 @@ function App () {
     setStory(prev => {
       if (typed === prev.full) {
         let newIndex = prev.index + 1
-        if (newIndex >= data.length) {
+        if (newIndex >= story.data.length) {
           newIndex = 0
         }
         setTyped('')
         return {
           ...prev,
-          full: data[newIndex],
+          full: story.data[newIndex],
           left: '',
           middle: '',
-          right: data[newIndex],
+          right: story.data[newIndex],
           part: TypedPart.None,
           leftColor: TextColor.None,
           middleColor: TextColor.None,
@@ -172,14 +176,31 @@ function App () {
     <div className='container-main'>
       <div style={{ padding: 16, fontSize: 50, display: 'flex', width: '100vw', height: '100vh', flexDirection: 'column', overflowY: 'hidden' }}>
         <div style={{ fontSize: 25, display: 'flex', height: 50, width: 'calc(100vw - 32px)', justifyContent: 'flex-start', alignItems: 'center' }}>
-          <p>Three Little Pigs 🐖🐖🐖</p>
+          <p>{story.title}</p>
         </div>
         <div style={{ display: 'flex', width: 'calc(100vw - 32px)', height: 2, marginBottom: 16, backgroundColor: 'black' }}/>
-        <div style={{ display: 'flex', flex: 1, width: 'calc(100vw - 32px)' }}>
+        <div style={{ display: 'flex', marginBottom: 32, width: 'calc(100vw - 32px)' }}>
           <TypeableOptionGroup typeableOption={story}/>
         </div>
         <div style={{ display: 'flex', flex: 1, width: 'calc(100vw - 32px)' }}>
           <p>{typed}<span className='blink' style={{ color: 'purple' }}>|</span></p>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-end', width: 'calc(100vw - 32px)', height: 70, overflowX: 'scroll' }}>
+          {stories.map((s, index) => {
+            return (
+              <div key={`story-${index}`} style={{ marginLeft: 16, display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                <span style={{ fontSize: 16, cursor: 'pointer' }} onClick={() => {
+                  setStory({
+                    ...defaults.typeableOption,
+                    title: s.title,
+                    data: s.story,
+                    full: s.story[0],
+                    right: s.story[0]
+                  })
+                }}>{s.title}</span>
+              </div>
+            )
+          })}
         </div>
       </div>
     </div>

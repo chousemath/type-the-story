@@ -1,4 +1,28 @@
-const data: Array<string> = [
+const bellingCat: Array<string> = [
+  'The Mice once called a meeting to decide on a plan to free themselves of their enemy, the Cat.',
+  'At least they wished to find some way of knowing when she was coming, so they might have time to run away.',
+  'Indeed, something had to be done, for they lived in such constant fear of her claws that they hardly dared stir from their dens by night or day.',
+  'Many plans were discussed, but none of them was thought good enough.',
+  'At last a very young Mouse got up and said:',
+  '"I have a plan that seems very simple, but I know it will be successful. All we have to do is to hang a bell about the Cat\'s neck. When we hear the bell ringing we will know immediately that our enemy is coming."',
+  'All the Mice were much surprised that they had not thought of such a plan before.',
+  'But in the midst of the rejoicing over their good fortune, an old Mouse arose and said:',
+  '"I will say that the plan of the young Mouse is very good. But let me ask one question: Who will bell the Cat?"',
+  'The moral of the story is "It is one thing to say that something should be done, but quite a different matter to do it."'
+]
+const frogOx: Array<string> = [
+  'An Ox came down to a reedy pool to drink.',
+  'As he splashed heavily into the water, he crushed a young Frog into the mud.',
+  'The old Frog soon missed the little one and asked his brothers and sisters what had become of him.',
+  '"A great big monster," said one of them, "stepped on little brother with one of his huge feet!"',
+  '"Big, was he!" said the old Frog, puffing herself up. "Was he as big as this?"',
+  '"Oh, much bigger!" they cried.',
+  'The Frog puffed up still more.',
+  '"He could not have been bigger than this," she said.',
+  'But the little Frogs all declared that the monster was much, much bigger and the old Frog kept puffing herself out more and more until, all at once, she burst.',
+  'The moral of the story is, "Do not attempt the impossible.".'
+]
+const threeLittlePigs: Array<string> = [
   'Once upon a time there was an old mother pig who had three little pigs and not enough food to feed them.',
   'So when they were old enough, she sent them out into the world to seek their fortunes.',
   'The first little pig was very lazy.',
@@ -50,4 +74,13 @@ const data: Array<string> = [
   'Then, just as the wolf was coming down the chimney, the little piggy pulled off the lid, and plop! in fell the wolf into the scalding water.',
   'So the little piggy put on the cover again, boiled the wolf up, and the three little pigs ate him for supper.'
 ]
-export { data }
+interface Story {
+  title: string;
+  story: Array<string>;
+}
+const stories: Array<Story> = [
+  { title: 'The Three Little Pigs', story: threeLittlePigs },
+  { title: 'The Frog and the Ox', story: frogOx },
+  { title: 'Belling the Cat', story: bellingCat }
+]
+export { stories }
