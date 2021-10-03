@@ -1,5 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
 import './App.css'
+import {
+  ContainerMain,
+  ContainerTitle
+} from './Components'
 import PropTypes from 'prop-types'
 import { validKeys } from './ValidKeys'
 import { stories } from './Data'
@@ -174,10 +178,8 @@ function App () {
   }, [typed])
   return (
     <div className='container-main'>
-      <div style={{ padding: 16, fontSize: 50, display: 'flex', width: '100vw', height: '100vh', flexDirection: 'column', overflowY: 'hidden' }}>
-        <div style={{ fontSize: 25, display: 'flex', height: 50, width: 'calc(100vw - 32px)', justifyContent: 'flex-start', alignItems: 'center' }}>
-          <p>{story.title}</p>
-        </div>
+      <ContainerMain>
+        <ContainerTitle>{story.title}</ContainerTitle>
         <div style={{ display: 'flex', width: 'calc(100vw - 32px)', height: 2, marginBottom: 16, backgroundColor: 'black' }}/>
         <div style={{ display: 'flex', marginBottom: 32, width: 'calc(100vw - 32px)' }}>
           <TypeableOptionGroup typeableOption={story}/>
@@ -202,7 +204,7 @@ function App () {
             )
           })}
         </div>
-      </div>
+      </ContainerMain>
     </div>
   )
 }
