@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import Modal from 'react-modal'
 import './App.css'
 import {
   ContainerMain,
@@ -77,15 +78,33 @@ TypeableOptionGroup.propTypes = {
     throw new Error(`${componentName} is missing ${propName}`)
   }
 }
+const modalStyle = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)'
+  }
+}
 function App () {
   const typedValue = useRef<string>()
+  const startTime = useRef<number>((new Date()).getTime())
+  const [timeDiff, setTimeDiff] = useState<number>(0)
+  const [modalOpen, setModalOpen] = useState(false)
   const [story, setStory] = useState<TypeableOption>({
     ...defaults.typeableOption,
+    title: stories[0].title,
     data: stories[0].story,
     full: stories[0].story[0],
     right: stories[0].story[0]
   })
   const [typed, setTyped] = useState<string>('')
+  const resetTimer = () => {
+    startTime.current = (new Date()).getTime()
+    setTimeDiff(0)
+  }
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       console.log(event.key)
@@ -104,13 +123,18 @@ function App () {
       })
     }
     document.addEventListener('keydown', handleKeyDown)
+    const timerID = setInterval(() => {
+      setTimeDiff((new Date()).getTime() - startTime.current)
+    }, 1000)
     return () => {
       document.removeEventListener('keydown', handleKeyDown)
+      clearInterval(timerID)
     }
   }, [])
   useEffect(() => {
     setStory(prev => {
       if (typed === prev.full) {
+        resetTimer()
         let newIndex = prev.index + 1
         if (newIndex >= story.data.length) {
           newIndex = 0
@@ -183,20 +207,36 @@ function App () {
       }
     })
   }, [typed])
+  const onAfterModalOpen = () => {}
+  const onRequestModalClose = () => setModalOpen(false)
   return (
-    <ContainerAll>
-      <ContainerMain>
-        <ContainerTitle>{story.title}</ContainerTitle>
-        <Divider1/>
-        <ContainerStory><TypeableOptionGroup typeableOption={story}/></ContainerStory>
-        <ContainerTyping>
-          <p>{typed}<span className='blink' style={{ color: 'purple' }}>|</span></p>
-        </ContainerTyping>
+    <>
+      <ContainerAll>
+        <ContainerMain>
+          <ContainerTitle>
+            <span style={{ cursor: 'pointer' }} onClick={() => setModalOpen(true)}>{story.title}</span> <span style={{ marginLeft: '16px', cursor: 'pointer' }} onClick={resetTimer}>⏲️ {Math.round(timeDiff / 1000)}s</span>
+          </ContainerTitle>
+          <Divider1/>
+          <ContainerStory><TypeableOptionGroup typeableOption={story}/></ContainerStory>
+          <ContainerTyping>
+            <p>{typed}<span className='blink' style={{ color: 'purple' }}>|</span></p>
+          </ContainerTyping>
+        </ContainerMain>
+      </ContainerAll>
+      <Modal
+        isOpen={modalOpen}
+        onAfterOpen={onAfterModalOpen}
+        onRequestClose={onRequestModalClose}
+        style={modalStyle}
+        contentLabel="Stories"
+        ariaHideApp={false}
+      >
         <StorySelection>
           {stories.map((s, index) => {
             return (
               <StoryOption key={`story-${index}`}>
                 <StoryOptionText onClick={() => {
+                  resetTimer()
                   setStory({
                     ...defaults.typeableOption,
                     title: s.title,
@@ -204,13 +244,19 @@ function App () {
                     full: s.story[0],
                     right: s.story[0]
                   })
+                  setModalOpen(false)
                 }}>{s.title}</StoryOptionText>
               </StoryOption>
             )
           })}
+          <StoryOption>
+            <StoryOptionText onClick={() => setModalOpen(false)}>
+              Cancel
+            </StoryOptionText>
+          </StoryOption>
         </StorySelection>
-      </ContainerMain>
-    </ContainerAll>
+      </Modal>
+    </>
   )
 }
 export default App

@@ -5,7 +5,7 @@ const StoryOptionText = styled.span`
     white-space: nowrap;
 `
 const StoryOption = styled.div`
-    margin-left: 16px; 
+    margin-bottom: 8px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -13,12 +13,10 @@ const StoryOption = styled.div`
 `
 const StorySelection = styled.section`
     display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    align-items: flex-end;
-    width: calc(100vw - 32px);
-    height: 70px;
-    overflow-x: scroll;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
 `
 const ContainerTyping = styled.section`
     display: flex;
