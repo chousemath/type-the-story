@@ -2,7 +2,14 @@ import React, { useEffect, useRef, useState } from 'react'
 import './App.css'
 import {
   ContainerMain,
-  ContainerTitle
+  ContainerTitle,
+  ContainerAll,
+  Divider1,
+  ContainerStory,
+  ContainerTyping,
+  StorySelection,
+  StoryOption,
+  StoryOptionText
 } from './Components'
 import PropTypes from 'prop-types'
 import { validKeys } from './ValidKeys'
@@ -177,21 +184,19 @@ function App () {
     })
   }, [typed])
   return (
-    <div className='container-main'>
+    <ContainerAll>
       <ContainerMain>
         <ContainerTitle>{story.title}</ContainerTitle>
-        <div style={{ display: 'flex', width: 'calc(100vw - 32px)', height: 2, marginBottom: 16, backgroundColor: 'black' }}/>
-        <div style={{ display: 'flex', marginBottom: 32, width: 'calc(100vw - 32px)' }}>
-          <TypeableOptionGroup typeableOption={story}/>
-        </div>
-        <div style={{ display: 'flex', flex: 1, width: 'calc(100vw - 32px)' }}>
+        <Divider1/>
+        <ContainerStory><TypeableOptionGroup typeableOption={story}/></ContainerStory>
+        <ContainerTyping>
           <p>{typed}<span className='blink' style={{ color: 'purple' }}>|</span></p>
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-end', width: 'calc(100vw - 32px)', height: 70, overflowX: 'scroll' }}>
+        </ContainerTyping>
+        <StorySelection>
           {stories.map((s, index) => {
             return (
-              <div key={`story-${index}`} style={{ marginLeft: 16, display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                <span style={{ fontSize: 16, cursor: 'pointer' }} onClick={() => {
+              <StoryOption key={`story-${index}`}>
+                <StoryOptionText onClick={() => {
                   setStory({
                     ...defaults.typeableOption,
                     title: s.title,
@@ -199,13 +204,13 @@ function App () {
                     full: s.story[0],
                     right: s.story[0]
                   })
-                }}>{s.title}</span>
-              </div>
+                }}>{s.title}</StoryOptionText>
+              </StoryOption>
             )
           })}
-        </div>
+        </StorySelection>
       </ContainerMain>
-    </div>
+    </ContainerAll>
   )
 }
 export default App
