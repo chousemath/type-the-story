@@ -15,24 +15,17 @@ import {
 import PropTypes from 'prop-types'
 import { validKeys } from './ValidKeys'
 import { stories } from './Data'
-enum TextColor { Highlighted='white', None='black' }
-enum TypedPart { None, Left, Middle }
-interface TypeableOption {
-  title: string;
-  data: Array<string>;
-  full: string;
-  left: string;
-  right: string;
-  middle: string;
-  part: TypedPart;
-  leftColor: TextColor;
-  middleColor: TextColor;
-  index: number;
-}
+import { GameState, StoryKeys, TextColor, TypedPart } from './Enums'
+import StartScreen from './StartScreen'
+import { StoryProfile, TypeableOption, UserProfile } from './Interfaces'
+import EndScreen from './EndScreen'
+import { formatMilliseconds } from './format'
+import { PROFILEKEY } from './config'
 const defaults: {
   typeableOption: TypeableOption
 } = {
   typeableOption: {
+    key: StoryKeys.threeLittlePigs,
     title: 'The Three Little Pigs',
     data: [],
     full: 'Hi there',
@@ -90,11 +83,18 @@ const modalStyle = {
 }
 function App () {
   const typedValue = useRef<string>()
+  const timeDiffRef = useRef<number>()
   const startTime = useRef<number>((new Date()).getTime())
   const [timeDiff, setTimeDiff] = useState<number>(0)
+  const [totalTimeDiff, setTotalTimeDiff] = useState<number>(0)
+  const [profile, setProfile] = useState<UserProfile>({})
+  const [storyProfile, setStoryProfile] = useState<StoryProfile|null>(null)
+  const [totalTimeDiffPhrase, setTotalTimeDiffPhrase] = useState<string>('')
   const [modalOpen, setModalOpen] = useState(false)
+  const [gameState, setGameState] = useState(GameState.StartScreen)
   const [story, setStory] = useState<TypeableOption>({
     ...defaults.typeableOption,
+    key: stories[0].key,
     title: stories[0].title,
     data: stories[0].story,
     full: stories[0].story[0],
@@ -106,8 +106,27 @@ function App () {
     setTimeDiff(0)
   }
   useEffect(() => {
+    console.log(profile)
+  }, [profile])
+  useEffect(() => {
+    if (storyProfile) setGameState(GameState.EndScreen)
+  }, [storyProfile])
+  useEffect(() => {
+    if (gameState === GameState.StartScreen || gameState === GameState.Playing) {
+      timeDiffRef.current = 0
+      setTotalTimeDiff(0)
+      resetTimer()
+      setStoryProfile(null)
+    } else if (gameState === GameState.EndScreen) {
+      resetTimer()
+      setTotalTimeDiff(0)
+    }
+  }, [gameState])
+  useEffect(() => {
+    const _profile = localStorage.getItem(PROFILEKEY)
+    setProfile(_profile ? JSON.parse(_profile) : {})
+
     const handleKeyDown = (event: KeyboardEvent) => {
-      console.log(event.key)
       if (!(event.key in validKeys)) return
       setTyped(prev => {
         let newTyped = ''
@@ -132,12 +151,31 @@ function App () {
     }
   }, [])
   useEffect(() => {
+    setTotalTimeDiffPhrase(formatMilliseconds(totalTimeDiff))
+  }, [totalTimeDiff])
+  useEffect(() => {
     setStory(prev => {
       if (typed === prev.full) {
+        const diff = totalTimeDiff + timeDiff
+        timeDiffRef.current = diff
+        setTotalTimeDiff(diff)
         resetTimer()
+        // joseph
         let newIndex = prev.index + 1
         if (newIndex >= story.data.length) {
           newIndex = 0
+          setProfile(prev => {
+            const _profile: StoryProfile = prev[story.key] || { bestTime: -1, lastTime: -1, worstTime: -1 }
+            const t = timeDiffRef.current || 0
+            _profile.lastTime = t
+            _profile.bestTime = _profile.bestTime === -1 ? t : Math.min(_profile.bestTime, t)
+            _profile.worstTime = _profile.worstTime === -1 ? t : Math.max(_profile.worstTime, t)
+            setStoryProfile(_profile)
+            timeDiffRef.current = 0
+            const newProfile = { ...prev, [story.key]: _profile }
+            localStorage.setItem(PROFILEKEY, JSON.stringify(newProfile))
+            return newProfile
+          })
         }
         setTyped('')
         return {
@@ -164,7 +202,6 @@ function App () {
         }
       }
       const start = prev.full.indexOf(typed)
-      console.log(`start: ${start}`)
       let part = TypedPart.None
       if (start === -1) {
         return {
@@ -209,20 +246,42 @@ function App () {
   }, [typed])
   const onAfterModalOpen = () => {}
   const onRequestModalClose = () => setModalOpen(false)
+  let mainUI = null
+  if (gameState === GameState.StartScreen) {
+    mainUI = (
+      <StartScreen
+        setGameState={setGameState}
+        setModalOpen={setModalOpen}
+        story={story}
+        />
+    )
+  } else if (gameState === GameState.EndScreen) {
+    mainUI = (
+      <EndScreen
+        setGameState={setGameState}
+        storyProfile={storyProfile || null} />
+    )
+  } else {
+    mainUI = (
+      <>
+        <ContainerAll>
+          <ContainerMain>
+            <ContainerTitle>
+              <span style={{ cursor: 'pointer' }} onClick={() => setModalOpen(true)}>{story.title}</span> <span style={{ marginLeft: '16px', cursor: 'pointer' }} onClick={resetTimer}>⏲️ {Math.round(timeDiff / 1000)}s</span><span style={{ marginLeft: '32px' }} >Total Time: {totalTimeDiffPhrase}</span><span style={{ marginLeft: '32px', cursor: 'pointer' }} onClick={() => setGameState(GameState.StartScreen)}>RESTART</span>
+            </ContainerTitle>
+            <Divider1/>
+            <ContainerStory><TypeableOptionGroup typeableOption={story}/></ContainerStory>
+            <ContainerTyping>
+              <p>{typed}<span className='blink' style={{ color: 'purple' }}>|</span></p>
+            </ContainerTyping>
+          </ContainerMain>
+        </ContainerAll>
+      </>
+    )
+  }
   return (
     <>
-      <ContainerAll>
-        <ContainerMain>
-          <ContainerTitle>
-            <span style={{ cursor: 'pointer' }} onClick={() => setModalOpen(true)}>{story.title}</span> <span style={{ marginLeft: '16px', cursor: 'pointer' }} onClick={resetTimer}>⏲️ {Math.round(timeDiff / 1000)}s</span>
-          </ContainerTitle>
-          <Divider1/>
-          <ContainerStory><TypeableOptionGroup typeableOption={story}/></ContainerStory>
-          <ContainerTyping>
-            <p>{typed}<span className='blink' style={{ color: 'purple' }}>|</span></p>
-          </ContainerTyping>
-        </ContainerMain>
-      </ContainerAll>
+      {mainUI}
       <Modal
         isOpen={modalOpen}
         onAfterOpen={onAfterModalOpen}
@@ -237,8 +296,10 @@ function App () {
               <StoryOption key={`story-${index}`}>
                 <StoryOptionText onClick={() => {
                   resetTimer()
+                  console.log(s)
                   setStory({
                     ...defaults.typeableOption,
+                    key: s.key,
                     title: s.title,
                     data: s.story,
                     full: s.story[0],

@@ -1,3 +1,20 @@
+import { StoryKeys } from './Enums'
+
+const testStory: Array<string> = [
+  'once',
+  'upon',
+  'time'
+]
+const testStory2: Array<string> = [
+  'the',
+  'world',
+  'once'
+]
+const testStory3: Array<string> = [
+  'whale',
+  'horse',
+  'dog'
+]
 const owlGrasshopper: Array<string> = [
   'The Owl always takes her sleep during the day.',
   'Then after sundown, when the rosy light fades from the sky and the shadows rise slowly through the wood, out she comes ruffling and blinking from the old hollow tree.',
@@ -171,18 +188,22 @@ const threeLittlePigs: Array<string> = [
   'So the little piggy put on the cover again, boiled the wolf up, and the three little pigs ate him for supper.'
 ]
 interface Story {
+  key: StoryKeys;
   title: string;
   story: Array<string>;
 }
 const stories: Array<Story> = [
-  { title: '🐷🐷 The Three Little Pigs', story: threeLittlePigs },
-  { title: '🐸🐂 The Frog and the Ox', story: frogOx },
-  { title: '🔔🐈 Belling the Cat', story: bellingCat },
-  { title: '🐁🐀 The Town Mouse & the Country Mouse', story: townMouse },
-  { title: '🦊🍇 The Fox & the Grapes', story: foxGrapes },
-  { title: '🐺🦢 The Wolf & the Crane', story: wolfCrane },
-  { title: '🦁🐁 The Lion & the Mouse', story: lionMouse },
-  { title: '🪰🐂 The Gnat & the Bull', story: gnatBull },
-  { title: '🦉🦗 The Owl & the Grasshopper', story: owlGrasshopper }
+  { key: StoryKeys.testStory, title: '1. Test', story: testStory },
+  { key: StoryKeys.testStory2, title: '2. Test2', story: testStory2 },
+  { key: StoryKeys.testStory3, title: '3. Test3', story: testStory3 },
+  { key: StoryKeys.threeLittlePigs, title: '🐷🐷 The Three Little Pigs', story: threeLittlePigs },
+  { key: StoryKeys.frogOx, title: '🐸🐂 The Frog and the Ox', story: frogOx },
+  { key: StoryKeys.bellingCat, title: '🔔🐈 Belling the Cat', story: bellingCat },
+  { key: StoryKeys.townMouse, title: '🐁🐀 The Town Mouse & the Country Mouse', story: townMouse },
+  { key: StoryKeys.foxGrapes, title: '🦊🍇 The Fox & the Grapes', story: foxGrapes },
+  { key: StoryKeys.wolfCrane, title: '🐺🦢 The Wolf & the Crane', story: wolfCrane },
+  { key: StoryKeys.lionMouse, title: '🦁🐁 The Lion & the Mouse', story: lionMouse },
+  { key: StoryKeys.gnatBull, title: '🪰🐂 The Gnat & the Bull', story: gnatBull },
+  { key: StoryKeys.owlGrasshopper, title: '🦉🦗 The Owl & the Grasshopper', story: owlGrasshopper }
 ]
 export { stories }
